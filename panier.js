@@ -1,5 +1,6 @@
 // Fonction d'animation du menu
 const menu = document.querySelector("#menuPanier");
+let timeoutId;
 
 function animateNavOnScroll() {
     let lastScrollValue = 0;
@@ -8,11 +9,18 @@ function animateNavOnScroll() {
             let top  = document.documentElement.scrollTop;
         if(lastScrollValue < top) {
             menu.classList.add("nav-hidden");
+            timeoutId = setTimeout(() => {
+                menu.style.display = "none";
+            }, 300);
         } else {
-            menu.style.transition = "0.3s";
-            menu.classList.remove("nav-hidden");
+            menu.style.display = "flex";
+            timeoutId = setTimeout(() => {
+                menu.style.transition = "0.3s";
+                menu.classList.remove("nav-hidden");
+            }, 300);
         }
         lastScrollValue = top;
+        
     });
 };
 
