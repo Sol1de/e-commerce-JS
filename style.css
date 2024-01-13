@@ -25,4 +25,25 @@
   padding-top: 20px;
 }
 
+.panier-items {
+  display: flex;
+  justify-content: space-between;
+}
+
+.panier-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.panier-item-choice {
+  display: flex;
+  gap: 5px;
+}
+.panier-item-choice-add {
+  cursor: pointer;
+}
+.panier-item-choice-remove {
+  cursor: pointer;
+}
+
 /*# sourceMappingURL=style.css.map */

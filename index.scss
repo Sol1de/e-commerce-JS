@@ -25,6 +25,29 @@
         }
     }
 }
+
 #panier {
     padding-top: 20px;
+}
+.panier-items {
+    display: flex;
+    justify-content: space-between;
+}
+.panier-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &-choice {
+        display: flex;
+        gap: 5px;
+
+        &-add {
+            cursor: pointer;
+        }
+
+        &-remove {
+            cursor: pointer;
+        }
+    }
 }

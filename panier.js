@@ -24,12 +24,11 @@ function animateNavOnScroll() {
     });
 };
 
-// Afficher le panier sur la page panier
 function displayCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    const panierItemsBillPrice = document.querySelector('.panier-items-preview');
-    panierItemsBillPrice.innerHTML = '';
+    const panierItemsPreview = document.querySelector('.panier-items-preview');
+    panierItemsPreview.innerHTML = '';
 
     cart.forEach(item => {
         const productItem = document.createElement('div');
@@ -38,6 +37,17 @@ function displayCart() {
         const productItemText = document.createElement('p');
         productItemText.classList.add('panier-item-text');
         productItemText.textContent = `${item.name} x ${item.quantity}`;
+
+        const productItemImage = document.createElement('img');
+        productItemImage.classList.add('panier-item-img');
+
+        getProductImage(item.name)
+            .then(imageUrl => {
+                productItemImage.src = imageUrl;
+            })
+            .catch(error => {
+                console.error("Erreur lors du chargement de l'image du Pokémon", error);
+            });
 
         const productItemChoice = document.createElement('div');
         productItemChoice.classList.add('panier-item-choice');
@@ -54,10 +64,18 @@ function displayCart() {
 
         productItemChoice.appendChild(productItemChoiceAdd);
         productItemChoice.appendChild(productItemChoiceRemove);
+        productItem.appendChild(productItemImage);
         productItem.appendChild(productItemText);
         productItem.appendChild(productItemChoice);
-        panierItemsBillPrice.appendChild(productItem);
+        panierItemsPreview.appendChild(productItem);
     });
+}
+
+// Fonction pour récupérer l'URL de l'image du Pokémon en fonction du nom
+async function getProductImage(product) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${product}`);
+    const data = await response.json();
+    return data.sprites.front_default;
 }
 
 // Gestion du panier (ajouter ou supprimer un produit)
