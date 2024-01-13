@@ -48,6 +48,10 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
             let pokeStats = document.createElement("div");
             pokeStats.classList.add("produit-stats");
 
+            let pokeBuy = document.createElement("button");
+            pokeBuy.classList.add("produit-buy");
+            pokeBuy.textContent = "Acheter";
+
             fetch(`${element.url}`)
             .then(response => response.json())
             .then(data => {
@@ -72,12 +76,36 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
             produit.appendChild(produitTitle);
             produit.appendChild(produitImg);
             produit.appendChild(pokeStats);
+            produit.appendChild(pokeBuy);
             pageProduits.appendChild(produit);
         })
         
     })
     .catch(error => {
         console.log("Une erreur s'est produite", error);
+});
+
+// Ajouter un produit au panier
+function updateCart(productName) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingProductIndex = cart.findIndex(item => item.name === productName);
+
+    if (existingProductIndex !== -1) {
+        cart[existingProductIndex].quantity++;
+    } else {
+        cart.push({ name: productName, quantity: 1 });
+    }
+
+    // Mettre à jour le panier dans le localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Fonction clic sur le bouton "Acheter"
+pageProduits.addEventListener('click', (event) => {
+    if (event.target.classList.contains('produit-buy')) {
+        const productName = event.target.parentElement.querySelector('.produit-title').textContent;
+        updateCart(productName);
+    }
 });
 
 //css a adapté au html
