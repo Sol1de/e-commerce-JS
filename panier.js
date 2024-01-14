@@ -24,58 +24,104 @@ function animateNavOnScroll() {
     });
 };
 
-function displayCart() {
+// Fonction d'affichage du panier
+async function displayCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
     const panierItemsPreview = document.querySelector('.panier-items-preview');
     panierItemsPreview.innerHTML = '';
 
-    cart.forEach(item => {
-        const productItem = document.createElement('div');
-        productItem.classList.add('panier-item');
+    try {
+        const cartWithImageURLs = await updateCartWithImageURLs(cart);
 
-        const productItemText = document.createElement('p');
-        productItemText.classList.add('panier-item-text');
-        productItemText.textContent = `${item.name} x ${item.quantity}`;
+        cartWithImageURLs.forEach(item => {
+            const productItem = document.createElement('div');
+            productItem.classList.add('panier-item');
 
-        const productItemImage = document.createElement('img');
-        productItemImage.classList.add('panier-item-img');
+            const productItemChoice = document.createElement('div');
+            productItemChoice.classList.add('panier-item-container-choice');
 
-        getProductImage(item.name)
-            .then(imageUrl => {
-                productItemImage.src = imageUrl;
-            })
-            .catch(error => {
-                console.error("Erreur lors du chargement de l'image du Pokémon", error);
-            });
+            const productItemChoiceAdd = document.createElement('a');
+            productItemChoiceAdd.classList.add('panier-item-container-choice-add');
+            productItemChoiceAdd.textContent = '+';
+            productItemChoiceAdd.addEventListener('click', () => updateCart(item.name, 'add'));
 
-        const productItemChoice = document.createElement('div');
-        productItemChoice.classList.add('panier-item-choice');
+            const productItemQuantity = document.createElement('p');
+            productItemQuantity.classList.add('panier-item-container-quantity');
+            productItemQuantity.textContent = item.quantity;
 
-        const productItemChoiceAdd = document.createElement('a');
-        productItemChoiceAdd.classList.add('panier-item-choice-add');
-        productItemChoiceAdd.textContent = '+';
-        productItemChoiceAdd.addEventListener('click', () => updateCart(item.name, 'add'));
+            const productItemChoiceRemove = document.createElement('a');
+            productItemChoiceRemove.classList.add('panier-item-container-choice-remove');
+            productItemChoiceRemove.textContent = '-';
+            productItemChoiceRemove.addEventListener('click', () => updateCart(item.name, 'remove'));
 
-        const productItemChoiceRemove = document.createElement('a');
-        productItemChoiceRemove.classList.add('panier-item-choice-remove');
-        productItemChoiceRemove.textContent = '-';
-        productItemChoiceRemove.addEventListener('click', () => updateCart(item.name, 'remove'));
+            const productInfoContainer = document.createElement('div');
+            productInfoContainer.classList.add('panier-item-container');
 
-        productItemChoice.appendChild(productItemChoiceAdd);
-        productItemChoice.appendChild(productItemChoiceRemove);
-        productItem.appendChild(productItemImage);
-        productItem.appendChild(productItemText);
-        productItem.appendChild(productItemChoice);
-        panierItemsPreview.appendChild(productItem);
-    });
+            const productItemText = document.createElement('p');
+            productItemText.classList.add('panier-item-container-text');
+            productItemText.textContent = `${item.name}`;
+
+            const productItemPrice = document.createElement('p');
+            productItemPrice.classList.add('panier-item-container-price');
+            productItemPrice.textContent = `Prix: ${generateRandomPrice()}$`;
+
+            const productNamePriceContainer = document.createElement('div');
+            productNamePriceContainer.classList.add('panier-item-container-info');
+
+            productNamePriceContainer.appendChild(productItemText);
+            productNamePriceContainer.appendChild(productItemPrice);
+
+            productInfoContainer.appendChild(productNamePriceContainer);
+            productInfoContainer.appendChild(productItemChoice);
+
+
+            const productItemImage = document.createElement('img');
+            productItemImage.classList.add('panier-item-img');
+            productItemImage.src = item.imageUrl;
+
+            productItemChoice.appendChild(productItemChoiceRemove);
+            productItemChoice.appendChild(productItemQuantity);
+            productItemChoice.appendChild(productItemChoiceAdd);
+
+            productItem.appendChild(productItemImage);
+            productItem.appendChild(productInfoContainer);
+            panierItemsPreview.appendChild(productItem);
+        });
+    } catch (error) {
+        console.error("Une erreur s'est produite lors de l'affichage du panier", error);
+    }
+}
+
+
+// Fonction pour générer un prix aléatoire
+function generateRandomPrice() {
+    const randomPrice = (Math.random() * (100 - 10) + 10).toFixed(2);
+    localStorage.setItem('randomPrice', randomPrice);
+    return randomPrice;
 }
 
 // Fonction pour récupérer l'URL de l'image du Pokémon en fonction du nom
-async function getProductImage(product) {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${product}`);
+async function getProductImage(productName) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${productName}`);
     const data = await response.json();
     return data.sprites.front_default;
+}
+
+// Fonction pour mettre à jour le panier avec les URL des images
+async function updateCartWithImageURLs(cart) {
+    const updatedCart = await Promise.all(
+        cart.map(async item => {
+            if (!item.imageUrl) {
+                // Si l'URL de l'image n'est pas déjà présente, la récupérer depuis l'API
+                item.imageUrl = await getProductImage(item.name);
+            }
+            return item;
+        })
+    );
+
+    // Mettre à jour le panier dans le localStorage
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    return updatedCart;
 }
 
 // Gestion du panier (ajouter ou supprimer un produit)

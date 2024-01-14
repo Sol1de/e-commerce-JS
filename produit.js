@@ -24,15 +24,16 @@ function animateNavOnScroll() {
     });
 };
 
-
-
-//creation des produits dans le DOM (page produits)
+// Création des produits dans le DOM (page produits)
 let pageProduits = document.querySelector("#produits");
 
 fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
     .then(response => response.json())
     .then(data => {
         data.results.forEach(element => {
+            // Génération d'un prix aléatoire unique pour chaque produit en utilisant le nom du produit
+            const randomPrice = generateRandomPrice(element.name);
+
             let produit = document.createElement("div");
             produit.classList.add("produit");
             produit.style.width = "auto";
@@ -50,7 +51,9 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
 
             let pokeBuy = document.createElement("button");
             pokeBuy.classList.add("produit-buy");
-            pokeBuy.textContent = "Acheter";
+
+            // Affichage du prix généré aléatoirement sur le bouton "Acheter"
+            pokeBuy.textContent = `Acheter - ${randomPrice}$`;
 
             fetch(`${element.url}`)
             .then(response => response.json())
@@ -78,12 +81,40 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
             produit.appendChild(pokeStats);
             produit.appendChild(pokeBuy);
             pageProduits.appendChild(produit);
-        })
-        
+        });
     })
     .catch(error => {
         console.log("Une erreur s'est produite", error);
 });
+
+
+function generateRandomPrice(productName) {
+    // Utilisez le nom du produit pour générer un prix unique
+    const existingRandomPrice = localStorage.getItem(`randomPrice_${productName}`);
+    
+    // Si un prix aléatoire existe déjà dans le localStorage, utilisez-le
+    if (existingRandomPrice) {
+        return existingRandomPrice;
+    }
+
+    // Sinon, générez un nouveau prix aléatoire
+    const randomPrice = (Math.random() * (100 - 10) + 10).toFixed(2);
+
+    // Sauvegardez le nouveau prix aléatoire dans le localStorage avec le nom du produit comme clé
+    localStorage.setItem(`randomPrice_${productName}`, randomPrice);
+
+    return randomPrice;
+}
+
+// Fonction pour mettre à jour les boutons d'achat avec des prix aléatoires
+function updateBuyButtonsWithRandomPrice() {
+    const buyButtons = document.querySelectorAll('.produit-buy');
+
+    buyButtons.forEach(button => {
+        const randomPrice = generateRandomPrice();
+        button.textContent = `Acheter - ${randomPrice}$`;
+    });
+}
 
 // Ajouter un produit au panier
 function updateCart(productName) {
@@ -129,4 +160,5 @@ nav.style.top = "0";
 nav.style.height = "80px";
 
 //appel de la fonction d'animation du menu
+updateBuyButtonsWithRandomPrice();
 animateNavOnScroll();

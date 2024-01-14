@@ -32,22 +32,33 @@
 .panier-items {
     display: flex;
     justify-content: space-between;
+
+    &-preview {
+        width: 20%;
+    }
 }
 .panier-item {
     display: flex;
     align-items: center;
     gap: 10px;
 
-    &-choice {
+    &-container {
         display: flex;
-        gap: 5px;
-
-        &-add {
-            cursor: pointer;
-        }
-
-        &-remove {
-            cursor: pointer;
+        width: 100%;
+        justify-content: space-between;
+        
+        &-choice {
+            display: flex;
+            width: 20%;
+            justify-content: space-between;
+    
+            &-add {
+                cursor: pointer;
+            }
+    
+            &-remove {
+                cursor: pointer;
+            }
         }
     }
 }

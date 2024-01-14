@@ -29,20 +29,29 @@
   display: flex;
   justify-content: space-between;
 }
+.panier-items-preview {
+  width: 20%;
+}
 
 .panier-item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.panier-item-choice {
+.panier-item-container {
   display: flex;
-  gap: 5px;
+  width: 100%;
+  justify-content: space-between;
 }
-.panier-item-choice-add {
+.panier-item-container-choice {
+  display: flex;
+  width: 20%;
+  justify-content: space-between;
+}
+.panier-item-container-choice-add {
   cursor: pointer;
 }
-.panier-item-choice-remove {
+.panier-item-container-choice-remove {
   cursor: pointer;
 }
 
