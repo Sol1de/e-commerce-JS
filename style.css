@@ -7,17 +7,28 @@
   font-family: "Poppins", sans-serif;
 }
 
+.nav {
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
 .nav-hidden {
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
-
-.nav ul {
+.nav-menu-container {
+  display: flex;
+}
+.nav-menu-container-list {
+  display: flex;
+  gap: 24px;
+}
+.nav-menu-container-list ul {
   display: flex;
   gap: 20px;
   list-style: none;
 }
-.nav ul li {
+.nav-menu-container-list ul li {
   text-decoration: none;
 }
 

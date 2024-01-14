@@ -8,20 +8,35 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.nav-hidden {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-}
-
 .nav {
-    
-    ul {
-        display: flex;
-        gap: 20px;
-        list-style: none;
-        
-        li {
-            text-decoration: none;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+
+    &-hidden {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    &-menu {
+
+        &-container {
+            display: flex;
+
+            &-list {
+                display: flex;
+                gap: 24px;
+
+                ul {
+                    display: flex;
+                    gap: 20px;
+                    list-style: none;
+
+                    li {
+                        text-decoration: none;
+                    }
+                }
+            }
         }
     }
 }
@@ -29,6 +44,7 @@
 #panier {
     padding-top: 20px;
 }
+
 .panier-items {
     display: flex;
     justify-content: space-between;
@@ -37,6 +53,7 @@
         width: 20%;
     }
 }
+
 .panier-item {
     display: flex;
     align-items: center;
@@ -46,16 +63,16 @@
         display: flex;
         width: 100%;
         justify-content: space-between;
-        
+
         &-choice {
             display: flex;
             width: 20%;
             justify-content: space-between;
-    
+
             &-add {
                 cursor: pointer;
             }
-    
+
             &-remove {
                 cursor: pointer;
             }
