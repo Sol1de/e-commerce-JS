@@ -28,10 +28,26 @@ function animateNavOnScroll() {
 async function displayCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const panierItemsPreview = document.querySelector('.panier-items-preview');
+    const panierItemsBillPrice = document.querySelector('.panier-items-bill-price');
+    const panierItemsBillTaxe = document.querySelector('.panier-items-bill-taxe');
+    const panierItemsBillTotal = document.querySelector('.panier-items-bill-total');
+
     panierItemsPreview.innerHTML = '';
+    panierItemsBillPrice.innerHTML = '';
+    panierItemsBillTaxe.innerHTML = '';
+    panierItemsBillTotal.innerHTML = '';
+
+    if (cart.length === 0) {
+        // Le panier est vide, afficher un message
+        const emptyCartMessage = document.createElement('p');
+        emptyCartMessage.textContent = 'Votre panier est vide.';
+        panierItemsPreview.appendChild(emptyCartMessage);
+        return;
+    }
 
     try {
         const cartWithImageURLs = await updateCartWithImageURLs(cart);
+        let totalPrice = 0;
 
         cartWithImageURLs.forEach(item => {
             const productItem = document.createElement('div');
@@ -43,6 +59,7 @@ async function displayCart() {
             const productItemChoiceAdd = document.createElement('a');
             productItemChoiceAdd.classList.add('panier-item-container-choice-add');
             productItemChoiceAdd.textContent = '+';
+            productItemChoiceAdd.addEventListener('click', () => updateCart(item.name, 'add'));
 
             const productItemQuantity = document.createElement('p');
             productItemQuantity.classList.add('panier-item-container-quantity');
@@ -51,6 +68,7 @@ async function displayCart() {
             const productItemChoiceRemove = document.createElement('a');
             productItemChoiceRemove.classList.add('panier-item-container-choice-remove');
             productItemChoiceRemove.textContent = '-';
+            productItemChoiceRemove.addEventListener('click', () => updateCart(item.name, 'remove'));
 
             const productInfoContainer = document.createElement('div');
             productInfoContainer.classList.add('panier-item-container');
@@ -61,7 +79,8 @@ async function displayCart() {
 
             const productItemPrice = document.createElement('p');
             productItemPrice.classList.add('panier-item-container-price');
-            productItemPrice.textContent = `Prix: ${(item.quantity * item.price).toFixed(2)}$`;
+            const productPrice = localStorage.getItem(`randomPrice_${item.name}`);
+            productItemPrice.textContent = `Prix: ${productPrice}$`;
 
             const productNamePriceContainer = document.createElement('div');
             productNamePriceContainer.classList.add('panier-item-container-info');
@@ -84,21 +103,30 @@ async function displayCart() {
             productItem.appendChild(productInfoContainer);
             panierItemsPreview.appendChild(productItem);
 
-            // Ajouter des gestionnaires d'événements aux éléments créés
-            productItemChoiceAdd.addEventListener('click', () => {
-                const updatedQuantity = updateCart(item.name, 'add');
-                productItemQuantity.textContent = updatedQuantity;
-                updateCart(item.name, 'updatePrice');
-                displayCart(); // Mettre à jour l'affichage complet du panier
-            });
-
-            productItemChoiceRemove.addEventListener('click', () => {
-                const updatedQuantity = updateCart(item.name, 'remove');
-                productItemQuantity.textContent = updatedQuantity;
-                updateCart(item.name, 'updatePrice');
-                displayCart(); // Mettre à jour l'affichage complet du panier
-            });
+            // Mettre à jour le prix total
+            totalPrice += item.quantity * parseFloat(productPrice);
         });
+
+        // Afficher le prix brut
+        const priceText = document.createElement('p');
+        priceText.textContent = `Prix: ${totalPrice.toFixed(2)}$`;
+        panierItemsBillPrice.appendChild(priceText);
+
+        // Calculer les taxes (20% du prix brut)
+        const taxeAmount = 0.2 * totalPrice;
+
+        // Afficher les taxes
+        const taxeText = document.createElement('p');
+        taxeText.textContent = `Taxe (20%): ${taxeAmount.toFixed(2)}$`;
+        panierItemsBillTaxe.appendChild(taxeText);
+
+        // Calculer le prix total
+        const totalPriceWithTaxe = totalPrice + taxeAmount;
+
+        // Afficher le prix total
+        const totalPriceText = document.createElement('p');
+        totalPriceText.textContent = `Total: ${totalPriceWithTaxe.toFixed(2)}$`;
+        panierItemsBillTotal.appendChild(totalPriceText);
     } catch (error) {
         console.error("Une erreur s'est produite lors de l'affichage du panier", error);
     }
@@ -139,7 +167,7 @@ async function updateCartWithImageURLs(cart) {
     return updatedCart;
 }
 
-// Gestion du panier (ajouter, supprimer ou mettre à jour un produit)
+// Gestion du panier (ajouter ou supprimer un produit)
 function updateCart(productName, action) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingProductIndex = cart.findIndex(item => item.name === productName);
@@ -158,14 +186,31 @@ function updateCart(productName, action) {
                 cart.splice(existingProductIndex, 1);
             }
         }
-    } else if (action === 'updatePrice') {
-        if (existingProductIndex !== -1) {
-            cart[existingProductIndex].price = generateRandomPrice(productName);
-        }
     }
 
+    // Mettre à jour le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
-    return cart[existingProductIndex] ? cart[existingProductIndex].quantity : 0;
+
+    // Mettre à jour l'interface utilisateur pour refléter le changement dans le panier
+    displayCart();
+
+    // Calculer et mettre à jour le prix total
+    updateTotalPrice();
+}
+
+// Fonction pour mettre à jour le prix total
+function updateTotalPrice() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalPrice = 0;
+
+    cart.forEach(item => {
+        const productPrice = localStorage.getItem(`randomPrice_${item.name}`);
+        totalPrice += item.quantity * parseFloat(productPrice);
+    });
+
+    // Effacer le contenu précédent et ajouter le nouveau prix
+    panierItemsBillPrice.innerHTML = '';
+    panierItemsBillPrice.appendChild(priceText);
 }
 
 //css pour la nav
