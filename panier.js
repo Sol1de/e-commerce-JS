@@ -43,7 +43,6 @@ async function displayCart() {
             const productItemChoiceAdd = document.createElement('a');
             productItemChoiceAdd.classList.add('panier-item-container-choice-add');
             productItemChoiceAdd.textContent = '+';
-            productItemChoiceAdd.addEventListener('click', () => updateCart(item.name, 'add'));
 
             const productItemQuantity = document.createElement('p');
             productItemQuantity.classList.add('panier-item-container-quantity');
@@ -52,7 +51,6 @@ async function displayCart() {
             const productItemChoiceRemove = document.createElement('a');
             productItemChoiceRemove.classList.add('panier-item-container-choice-remove');
             productItemChoiceRemove.textContent = '-';
-            productItemChoiceRemove.addEventListener('click', () => updateCart(item.name, 'remove'));
 
             const productInfoContainer = document.createElement('div');
             productInfoContainer.classList.add('panier-item-container');
@@ -63,8 +61,7 @@ async function displayCart() {
 
             const productItemPrice = document.createElement('p');
             productItemPrice.classList.add('panier-item-container-price');
-            const productPrice = localStorage.getItem(`randomPrice_${item.name}`);
-            productItemPrice.textContent = `Prix: ${productPrice}$`;
+            productItemPrice.textContent = `Prix: ${(item.quantity * item.price).toFixed(2)}$`;
 
             const productNamePriceContainer = document.createElement('div');
             productNamePriceContainer.classList.add('panier-item-container-info');
@@ -74,7 +71,6 @@ async function displayCart() {
 
             productInfoContainer.appendChild(productNamePriceContainer);
             productInfoContainer.appendChild(productItemChoice);
-
 
             const productItemImage = document.createElement('img');
             productItemImage.classList.add('panier-item-img');
@@ -87,19 +83,39 @@ async function displayCart() {
             productItem.appendChild(productItemImage);
             productItem.appendChild(productInfoContainer);
             panierItemsPreview.appendChild(productItem);
+
+            // Ajouter des gestionnaires d'événements aux éléments créés
+            productItemChoiceAdd.addEventListener('click', () => {
+                const updatedQuantity = updateCart(item.name, 'add');
+                productItemQuantity.textContent = updatedQuantity;
+                updateCart(item.name, 'updatePrice');
+                displayCart(); // Mettre à jour l'affichage complet du panier
+            });
+
+            productItemChoiceRemove.addEventListener('click', () => {
+                const updatedQuantity = updateCart(item.name, 'remove');
+                productItemQuantity.textContent = updatedQuantity;
+                updateCart(item.name, 'updatePrice');
+                displayCart(); // Mettre à jour l'affichage complet du panier
+            });
         });
     } catch (error) {
         console.error("Une erreur s'est produite lors de l'affichage du panier", error);
     }
 }
 
+// Fonction pour générer un prix aléatoire ou récupérer le prix existant du localStorage
+function generateRandomPrice(productName) {
+    const storedPrice = localStorage.getItem(`randomPrice_${productName}`);
+    if (storedPrice) {
+        return storedPrice;
+    }
 
-// Fonction pour générer un prix aléatoire
-function generateRandomPrice() {
     const randomPrice = (Math.random() * (100 - 10) + 10).toFixed(2);
-    localStorage.setItem('randomPrice', randomPrice);
+    localStorage.setItem(`randomPrice_${productName}`, randomPrice);
     return randomPrice;
 }
+
 
 // Fonction pour récupérer l'URL de l'image du Pokémon en fonction du nom
 async function getProductImage(productName) {
@@ -123,7 +139,7 @@ async function updateCartWithImageURLs(cart) {
     return updatedCart;
 }
 
-// Gestion du panier (ajouter ou supprimer un produit)
+// Gestion du panier (ajouter, supprimer ou mettre à jour un produit)
 function updateCart(productName, action) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingProductIndex = cart.findIndex(item => item.name === productName);
@@ -142,11 +158,14 @@ function updateCart(productName, action) {
                 cart.splice(existingProductIndex, 1);
             }
         }
+    } else if (action === 'updatePrice') {
+        if (existingProductIndex !== -1) {
+            cart[existingProductIndex].price = generateRandomPrice(productName);
+        }
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-
-    displayCart();
+    return cart[existingProductIndex] ? cart[existingProductIndex].quantity : 0;
 }
 
 //css pour la nav
