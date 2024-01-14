@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700&display=swap');
 * {
     margin: 0;
     padding: 0;
@@ -8,10 +7,15 @@
     font-family: 'Poppins', sans-serif;
 }
 
+.fp-watermark {
+    display: none;
+}
+
 .nav {
     position: fixed;
     width: 100%;
     z-index: 1000;
+    background-color: white;
 
     &-hidden {
         opacity: 0;
@@ -19,30 +23,193 @@
     }
 
     &-menu {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 112px;
+        width: 100%;
 
         &-container {
             display: flex;
+            align-items: center;
+            gap: 10px;
 
             &-list {
                 display: flex;
                 gap: 24px;
+                padding-top: 12px;
 
-                ul {
-                    display: flex;
-                    gap: 20px;
-                    list-style: none;
-
-                    li {
+                li {
+                    
+                    a {
                         text-decoration: none;
+                        color: #111827;
                     }
+                }
+            }
+        }
+
+        &-buttons {
+            display: flex;
+            gap: 12px;
+            
+            &-catalogue {
+                background-color: transparent;
+                outline: none;
+                border: 1px solid #111827;
+                border-radius: 6px;
+                font-size: 14px;
+                padding: 10px 20px;
+                font-weight: 700;
+                cursor: pointer;
+                display: flex;
+                gap: 5px;
+                text-decoration: none;
+                color: #111827;
+            }
+
+            &-panier {
+                @extend .nav-menu-buttons-catalogue;
+                background-color: #111827;
+                color:  white;
+                align-items: center;
+            }
+        }
+    }
+}
+
+main {
+    padding-inline: 112px;
+}
+
+.header {
+    &-hero {
+        display: flex;
+        justify-content: space-between;
+
+        &-container {
+            width: 34%;
+    
+            &-slogan {
+                padding-bottom: 15px;
+                
+                &-title {
+                    font-size: 60px;
+                }
+            }
+        
+            &-button {
+                @extend .nav-menu-buttons-panier;
+                font-weight: 500;
+                width: fit-content;
+            }
+        }
+    
+        &-logo {
+            width: 50%;
+            height: auto;
+            position: absolute;
+            right: 0;
+            top: 28%;
+        }
+    }
+    
+}
+
+.nouveaute {
+
+    &-presentation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding-bottom: 80px;
+
+        &-title {
+            font-size: 60px;
+            font-weight: 700;
+            text-align: center;
+            width: 35%;
+        }
+    
+        &-paragraph {
+            text-align: center;
+            color: #6D7280;
+            width: 30%;
+        }
+    }
+
+    &-container {
+        display: flex;
+
+        &-item {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            &-image {
+                height: 100%;
+                padding-bottom: 30px;
+            }
+
+            &-text {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 70%;
+
+                &-title {
+                    font-size: 30px;
+                    text-align: center;
+                }
+
+                &-paragraph {
+                    text-align: center;
+                    color: #6D7280;
                 }
             }
         }
     }
 }
 
+.about {
+
+    &-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &-text {
+            display: flex;
+            flex-direction: column;
+            width: 40%;
+            gap: 16px;
+    
+            &-title {
+                font-size: 60px;
+                font-weight: 700;
+            }
+    
+            &-paragraph {
+                color: #6D7280;
+            }
+    
+            &-button {
+                @extend .nav-menu-buttons-catalogue;
+                width: fit-content;
+            }
+        }
+    
+        &-image {
+            width: 50%;
+            height: auto;
+        }
+    }
+
+}
+
 #panier {
-    padding-top: 20px;
+    padding-top: 100px;
 }
 
 .panier-items {

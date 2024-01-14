@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
         });
-        
+
         const accueilLink = document.querySelector("#menu-container-list-accueil");
         const nouveauteLink = document.querySelector("#menu-container-list-nouveaute");
         const aProposLink = document.querySelector("#menu-container-list-aPropos");
@@ -34,9 +34,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     }
 
-    // CSS du menu
-    const menu = document.querySelector("#menu");
-
     // Fonction de défilement vers les sections
     function scrollToSection(selector) {
         const targetSection = document.querySelector(selector);
@@ -48,10 +45,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
-
-
-
-
 
     // Appel des fonctions
     animationNav("#fullpage");
