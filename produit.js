@@ -31,7 +31,6 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
     .then(response => response.json())
     .then(data => {
         data.results.forEach(element => {
-            // Génération d'un prix aléatoire unique pour chaque produit en utilisant le nom du produit
             const randomPrice = generateRandomPrice(element.name);
 
             let produit = document.createElement("div");
@@ -51,8 +50,6 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
 
             let pokeBuy = document.createElement("button");
             pokeBuy.classList.add("produit-buy");
-
-            // Affichage du prix généré aléatoirement sur le bouton "Acheter"
             pokeBuy.textContent = `Acheter - ${randomPrice}$`;
 
             fetch(`${element.url}`)
@@ -87,22 +84,15 @@ fetch("https://pokeapi.co/api/v2/pokemon/?limit=50")
         console.log("Une erreur s'est produite", error);
 });
 
-
+//génération d'un prix aléatoire unique pour chaque produit en utilisant le nom du produit
 function generateRandomPrice(productName) {
-    // Utilisez le nom du produit pour générer un prix unique
     const existingRandomPrice = localStorage.getItem(`randomPrice_${productName}`);
-    
-    // Si un prix aléatoire existe déjà dans le localStorage, utilisez-le
+
     if (existingRandomPrice) {
         return existingRandomPrice;
     }
-
-    // Sinon, générez un nouveau prix aléatoire
     const randomPrice = (Math.random() * (100 - 10) + 10).toFixed(2);
-
-    // Sauvegardez le nouveau prix aléatoire dans le localStorage avec le nom du produit comme clé
     localStorage.setItem(`randomPrice_${productName}`, randomPrice);
-
     return randomPrice;
 }
 
@@ -118,20 +108,25 @@ function updateBuyButtonsWithRandomPrice() {
 
 // Ajouter un produit au panier
 function updateCart(productName) {
+    const randomPrice = generateRandomPrice(productName);
+    updateCartWithPrice(productName, randomPrice);
+}
+
+// Fonction pour mettre à jour le panier avec le prix du produit
+function updateCartWithPrice(productName, price) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingProductIndex = cart.findIndex(item => item.name === productName);
 
     if (existingProductIndex !== -1) {
         cart[existingProductIndex].quantity++;
     } else {
-        cart.push({ name: productName, quantity: 1 });
+        cart.push({ name: productName, quantity: 1, price: price });
     }
-
-    // Mettre à jour le panier dans le localStorage
+    
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-// Fonction clic sur le bouton "Acheter"
+// Ajouter un produit au panier lors du clic sur le bouton "Acheter"
 pageProduits.addEventListener('click', (event) => {
     if (event.target.classList.contains('produit-buy')) {
         const productName = event.target.parentElement.querySelector('.produit-title').textContent;

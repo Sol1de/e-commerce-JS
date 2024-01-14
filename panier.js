@@ -63,7 +63,8 @@ async function displayCart() {
 
             const productItemPrice = document.createElement('p');
             productItemPrice.classList.add('panier-item-container-price');
-            productItemPrice.textContent = `Prix: ${generateRandomPrice()}$`;
+            const productPrice = localStorage.getItem(`randomPrice_${item.name}`);
+            productItemPrice.textContent = `Prix: ${productPrice}$`;
 
             const productNamePriceContainer = document.createElement('div');
             productNamePriceContainer.classList.add('panier-item-container-info');
@@ -112,14 +113,12 @@ async function updateCartWithImageURLs(cart) {
     const updatedCart = await Promise.all(
         cart.map(async item => {
             if (!item.imageUrl) {
-                // Si l'URL de l'image n'est pas déjà présente, la récupérer depuis l'API
                 item.imageUrl = await getProductImage(item.name);
             }
             return item;
         })
     );
 
-    // Mettre à jour le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(updatedCart));
     return updatedCart;
 }
@@ -133,7 +132,7 @@ function updateCart(productName, action) {
         if (existingProductIndex !== -1) {
             cart[existingProductIndex].quantity++;
         } else {
-            cart.push({ name: productName, quantity: 1 });
+            cart.push({ name: productName, quantity: 1, price: generateRandomPrice(productName) });
         }
     } else if (action === 'remove') {
         if (existingProductIndex !== -1) {
@@ -145,10 +144,8 @@ function updateCart(productName, action) {
         }
     }
 
-    // Mettre à jour le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    // Mettre à jour l'interface utilisateur pour refléter le changement dans le panier
     displayCart();
 }
 
