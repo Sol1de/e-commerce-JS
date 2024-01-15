@@ -28,9 +28,9 @@ function animateNavOnScroll() {
 async function displayCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const panierItemsPreview = document.querySelector('.panier-items-preview');
-    const panierItemsBillPrice = document.querySelector('.panier-items-bill-price');
-    const panierItemsBillTaxe = document.querySelector('.panier-items-bill-taxe');
-    const panierItemsBillTotal = document.querySelector('.panier-items-bill-total');
+    const panierItemsBillPrice = document.querySelector('.panier-items-bill-container-price');
+    const panierItemsBillTaxe = document.querySelector('.panier-items-bill-container-taxe');
+    const panierItemsBillTotal = document.querySelector('.panier-items-bill-container-total');
 
     panierItemsPreview.innerHTML = '';
     panierItemsBillPrice.innerHTML = '';
@@ -41,6 +41,7 @@ async function displayCart() {
         // Le panier est vide, afficher un message
         const emptyCartMessage = document.createElement('p');
         emptyCartMessage.textContent = 'Votre panier est vide.';
+        emptyCartMessage.style.color = '#6D7280';
         panierItemsPreview.appendChild(emptyCartMessage);
         return;
     }
@@ -61,10 +62,6 @@ async function displayCart() {
             productItemChoiceAdd.textContent = '+';
             productItemChoiceAdd.addEventListener('click', () => updateCart(item.name, 'add'));
 
-            const productItemQuantity = document.createElement('p');
-            productItemQuantity.classList.add('panier-item-container-quantity');
-            productItemQuantity.textContent = item.quantity;
-
             const productItemChoiceRemove = document.createElement('a');
             productItemChoiceRemove.classList.add('panier-item-container-choice-remove');
             productItemChoiceRemove.textContent = '-';
@@ -73,12 +70,12 @@ async function displayCart() {
             const productInfoContainer = document.createElement('div');
             productInfoContainer.classList.add('panier-item-container');
 
-            const productItemText = document.createElement('p');
-            productItemText.classList.add('panier-item-container-text');
-            productItemText.textContent = `${item.name}`;
+            const productItemText = document.createElement('strong');
+            productItemText.classList.add('panier-item-container-info-text');
+            productItemText.textContent = `${item.name} x ${item.quantity}`;
 
             const productItemPrice = document.createElement('p');
-            productItemPrice.classList.add('panier-item-container-price');
+            productItemPrice.classList.add('panier-item-container-info-price');
             const productPrice = localStorage.getItem(`randomPrice_${item.name}`);
             productItemPrice.textContent = `Prix: ${productPrice}$`;
 
@@ -96,7 +93,6 @@ async function displayCart() {
             productItemImage.src = item.imageUrl;
 
             productItemChoice.appendChild(productItemChoiceRemove);
-            productItemChoice.appendChild(productItemQuantity);
             productItemChoice.appendChild(productItemChoiceAdd);
 
             productItem.appendChild(productItemImage);
@@ -109,24 +105,34 @@ async function displayCart() {
 
         // Afficher le prix brut
         const priceText = document.createElement('p');
-        priceText.textContent = `Prix: ${totalPrice.toFixed(2)}$`;
+        const priceTextInfo = document.createElement('p');
+        priceTextInfo.textContent = `${totalPrice.toFixed(2)}$`;
+        priceText.textContent = `Prix :`;
         panierItemsBillPrice.appendChild(priceText);
+        panierItemsBillPrice.appendChild(priceTextInfo);
+        
 
         // Calculer les taxes (20% du prix brut)
         const taxeAmount = 0.2 * totalPrice;
 
         // Afficher les taxes
         const taxeText = document.createElement('p');
-        taxeText.textContent = `Taxe (20%): ${taxeAmount.toFixed(2)}$`;
+        const taxeTextInfo = document.createElement('p');
+        taxeTextInfo.textContent = `${taxeAmount.toFixed(2)}$`;
+        taxeText.textContent = `Taxe (20%):`;
         panierItemsBillTaxe.appendChild(taxeText);
+        panierItemsBillTaxe.appendChild(taxeTextInfo);
 
         // Calculer le prix total
         const totalPriceWithTaxe = totalPrice + taxeAmount;
 
         // Afficher le prix total
         const totalPriceText = document.createElement('p');
-        totalPriceText.textContent = `Total: ${totalPriceWithTaxe.toFixed(2)}$`;
+        const totalPriceTextInfo = document.createElement('p');
+        totalPriceTextInfo.textContent = `${totalPriceWithTaxe.toFixed(2)}$`;
+        totalPriceText.textContent = `Total :`;
         panierItemsBillTotal.appendChild(totalPriceText);
+        panierItemsBillTotal.appendChild(totalPriceTextInfo);
     } catch (error) {
         console.error("Une erreur s'est produite lors de l'affichage du panier", error);
     }
