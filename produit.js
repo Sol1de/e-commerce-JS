@@ -82,8 +82,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 produit.classList.add("produit");
                 produit.setAttribute("data-aos", "zoom-in");
                 produit.setAttribute("data-aos-delay", "100");
-                produit.style.width = "auto";
-                produit.style.padding = "20px";
 
                 let produitTitle = document.createElement("h2");
                 produitTitle.classList.add("produit-title");
@@ -181,19 +179,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
-    //css a adapté au html
-    const html = document.querySelector("html");
-    html.style.overflow = "auto";
-
-    //css pour le container main produits
-    const containerProduits = document.querySelector("#produits");
-    containerProduits.style.display = "flex";
-    containerProduits.style.flexWrap = "wrap";
-    containerProduits.style.justifyContent = "flex-start";
-    containerProduits.style.gap = "12px";
-    containerProduits.style.height = "fit-content";
-    containerProduits.style.width = "fit-content";
-
     //css pour la nav
     const nav = document.querySelector("#menuProduit");
     nav.style.position = "fixed";
@@ -201,6 +186,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     nav.style.top = "0";
     nav.style.height = "80px";
     nav.style.zIndex = "2";
+    nav.style.width = "100%";
 
     //appel des fonctions
     updateBuyButtonsWithRandomPrice();

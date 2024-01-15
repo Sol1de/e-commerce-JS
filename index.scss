@@ -45,7 +45,7 @@
             &-list {
                 display: flex;
                 gap: 24px;
-                padding-top: 12px;
+                padding-top: 5px;
 
                 @media (max-width: 850px) {
                     display: none;
@@ -439,6 +439,46 @@ main {
         }
     }
 
+}
+
+#produits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px;
+    height: fit-content;
+    width: fit-content;
+
+    @media (max-width: 500px) {
+        justify-content: center;
+    }
+
+    .produit {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        align-items: center;
+
+        &-title {
+            text-align: center;
+        }
+
+        &-stats {
+            padding-bottom: 10px;
+
+            &-title {
+                text-align: center;
+            }
+
+            &-list {
+                text-align: center;
+            }
+        }
+
+        &-buy {
+            @extend .nav-menu-buttons-catalogue;
+        }
+    }
 }
 
 #panier {
